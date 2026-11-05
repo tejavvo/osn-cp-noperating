@@ -1,6 +1,8 @@
 # Distributed compute cluster protocol
 
-Version: 1. Status: implementation contract, no implementation exists yet.
+Version: 1. Status: implementation contract. Startup argument parsing, header
+encoding/decoding, and buffered connection I/O are implemented. Message payload
+encoding and application networking are subsequent steps.
 
 This document defines the team's wire format and shared behavior. The course
 brief remains the authority for assessed behavior. Choices such as message IDs,
@@ -521,10 +523,13 @@ the stream or fail the job solely because a checkpoint was too large.
 
 Put message IDs, enum values, constants, host-side records, and function
 declarations under `include/common/`; implementations belong in `src/common/`.
-Use one encoder/decoder shared by all three executables. Suggested interfaces:
+Use one encoder/decoder shared by all three executables. Header encoding and
+connection I/O are implemented in `src/common/protocol.c` and
+`src/common/connection.c`. See `include/common/connection.h` for socket ownership,
+callback lifetime, return values, queue limits, and polling requirements.
 
 ```c
-/* Signatures to define in shared headers during the next implementation step. */
+/* Implemented entry points declared in the shared headers. */
 int protocol_encode_header(const struct frame_header *header,
                            uint8_t output[24]);
 int protocol_decode_header(const uint8_t input[24],

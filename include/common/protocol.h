@@ -88,7 +88,10 @@ struct frame_header {
     uint32_t run_id;
 };
 
-/* Declarations only. Serialization will be implemented in the next step. */
+/* Return 0 on success, -1 on invalid input. Outputs change only on success.
+ * Decode validates magic, version and payload length. Message roles and payload
+ * schemas are validated by the caller after a complete frame arrives.
+ */
 int protocol_encode_header(const struct frame_header *header,
                            uint8_t output[CLUSTER_HEADER_BYTES]);
 int protocol_decode_header(const uint8_t input[CLUSTER_HEADER_BYTES],
